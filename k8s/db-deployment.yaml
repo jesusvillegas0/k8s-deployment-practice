@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: ghcr.io/jesusvillegas0/k8s-deployment-practice-db:latest
+        env:
+        - name: POSTGRES_DB
+          value: "app_db"
+        - name: POSTGRES_USER
+          value: "app_user"
+        - name: POSTGRES_PASSWORD
+          value: "app_password"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-persistent-storage
+      volumes:  # Aquí es donde deben ir los volúmenes, dentro de spec.template.spec
+      - name: postgres-persistent-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+      imagePullSecrets:
+      - name: myregistrykey
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
