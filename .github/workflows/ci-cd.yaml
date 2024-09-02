@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,3 +32,4 @@ jobs:
       run: |
         docker build -t ghcr.io/jesusvillegas0/k8s-deployment-practice-db:latest -f db/Dockerfile .
         docker push ghcr.io/jesusvillegas0/k8s-deployment-practice-db:latest
+
